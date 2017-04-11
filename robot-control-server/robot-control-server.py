@@ -32,10 +32,10 @@ def getSensorValues():
     dist_bl=distance(ULTRA_BL)
     dist_br=distance(ULTRA_BR)
     return "["+str(dist_fl)+"]["+str(dist_fr)+"]["+str(dist_bl)+"]["+str(dist_br)+"]"
-def setUpUltrasonicSensor(trig,echo):
+def setUpUltrasonicSensor(sensor):
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(trig, GPIO.OUT)
-    GPIO.setup(echo, GPIO.IN)
+    GPIO.setup(sensor[0], GPIO.OUT)
+    GPIO.setup(sensor[1], GPIO.IN)
 def distance(sensor):
     TRIG = sensor[0]
     ECHO = sensor[1]
@@ -61,7 +61,7 @@ def distance(sensor):
     TimeElapsed = StopTime - StartTime
     # multiply with the sonic speed (34300 cm/s)
     # and divide by 2, because there and back
-    distance = (TimeElapsed * 34300) / 2
+    distance = round(((TimeElapsed * 34300) / 2),2)
  
     return distance
 
@@ -81,6 +81,10 @@ s.bind((hostMACAddress, port))
 s.listen(backlog)
 left_val = 0
 right_val = 0
+setUpUltrasonicSensor(ULTRA_FL)
+setUpUltrasonicSensor(ULTRA_FR)
+setUpUltrasonicSensor(ULTRA_BL)
+setUpUltrasonicSensor(ULTRA_BR)
 try:
     client, clientInfo = s.accept()
     while 1:
