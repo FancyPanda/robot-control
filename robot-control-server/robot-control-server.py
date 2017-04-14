@@ -8,6 +8,14 @@ Bluetooth using PyBluez
 #####################<IMPORTS>##############################
 import bluetooth
 from random import randint
+import RPi.GPIO as GPIO
+import time
+
+###################<GLOBAL VARS>###########################
+ULTRA_FL = (23,24)
+ULTRA_FR = (23,24)
+ULTRA_BL = (23,24)
+ULTRA_BR = (23,24)
 ####################<FUNCTIONS>############################
 def formatData(data):
     p1 = 1
@@ -19,7 +27,44 @@ def formatData(data):
     return (left_val,right_val)
 
 def getSensorValues():
-    return "["+str(randint(0,10))+"]["+str(randint(0,10))+"]["+str(randint(0,10))+"]["+str(randint(0,10))+"]"
+    dist_fl=distance(ULTRA_FL)
+    dist_fr=distance(ULTRA_FR)
+    dist_bl=distance(ULTRA_BL)
+    dist_br=distance(ULTRA_BR)
+    return "["+str(dist_fl)+"]["+str(dist_fr)+"]["+str(dist_bl)+"]["+str(dist_br)+"]"
+def setUpUltrasonicSensor(trig,echo):
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(trig, GPIO.OUT)
+    GPIO.setup(echo, GPIO.IN)
+def distance(sensor):
+    TRIG = sensor[0]
+    ECHO = sensor[1]
+    # set Trigger to HIGH
+    GPIO.output(TRIG, True)
+ 
+    # set Trigger after 0.01ms to LOW
+    time.sleep(0.00001)
+    GPIO.output(TRIG, False)
+ 
+    StartTime = time.time()
+    StopTime = time.time()
+ 
+    # save StartTime
+    while GPIO.input(ECHO) == 0:
+        StartTime = time.time()
+ 
+    # save time of arrival
+    while GPIO.input(ECHO) == 1:
+        StopTime = time.time()
+ 
+    # time difference between start and arrival
+    TimeElapsed = StopTime - StartTime
+    # multiply with the sonic speed (34300 cm/s)
+    # and divide by 2, because there and back
+    distance = (TimeElapsed * 34300) / 2
+ 
+    return distance
+
 ##########################################################
 
 
@@ -41,13 +86,13 @@ try:
     while 1:
         data = client.recv(size)
         if data:
-	    formated_data = formatData(data)
+            formated_data = formatData(data)
             left_val = formated_data[0]
             right_val = formated_data[1] 
             print("DRIVE VALUES (L, R)") 
-	    print(left_val, right_val)
-	    sensor_values = getSensorValues()
-	    print("SENSOR VALUES (FL, FR, BL, BR)")
+            print(left_val, right_val)
+            sensor_values = getSensorValues()
+            print("SENSOR VALUES (FL, FR, BL, BR)")
             print(sensor_values)
             client.send(sensor_values) # Echo back to client
 except: # Exception as e:
