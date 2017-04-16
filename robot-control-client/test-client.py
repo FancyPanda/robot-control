@@ -25,7 +25,7 @@ def formatData(data):
 # Create the client socket
 client_socket=BluetoothSocket( RFCOMM )
 
-client_socket.connect(("B8:27:EB:21:DD:94", 3))
+client_socket.connect(("B8:27:EB:4A:A5:58", 3))
 print("Link Established")
 print("------------------------------------")
 

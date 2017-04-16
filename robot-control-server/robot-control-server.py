@@ -72,7 +72,7 @@ def distance(sensor):
 
 ######################<MAIN CODE>#########################
 
-hostMACAddress = 'B8:27:EB:21:DD:94' # The MAC address of a Bluetooth adapter on the server. The server might have multiple Bluetooth adapters.
+hostMACAddress = 'B8:27:EB:4A:A5:58' # The MAC address of a Bluetooth adapter on the server. The server might have multiple Bluetooth adapters.
 port = 3
 backlog = 1
 size = 1024
