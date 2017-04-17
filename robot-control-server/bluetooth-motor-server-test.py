@@ -13,8 +13,8 @@ def main():
     port = 3
     backlog = 1
     size = 1024
-    s = bluetooth.BluetootSocket(bluetooth.RFCOMM)
-    s.bind(hostMACAddress, port)
+    s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+    s.bind((hostMACAddress, port))
     s.listen(backlog)
     try:
         client, clientInfo = s.accept()
