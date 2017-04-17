@@ -16,7 +16,8 @@ try:
         text = input("Send data!")
         if text =="q":
             print("Quitting...")
-            break
+            client_socket.close()
+            quit 
         client_socket.send(text)
 except: #Exception as e:
 #    print(str(e))
