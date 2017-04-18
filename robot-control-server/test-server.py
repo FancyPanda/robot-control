@@ -15,4 +15,4 @@ while(1):
   if(data == 'q'):
     client_socket.close()
     server_socket.close()
-    quit 
+    quit() 
