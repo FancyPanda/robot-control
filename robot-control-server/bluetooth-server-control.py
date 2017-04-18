@@ -1,3 +1,4 @@
+#! /usr/bin/python2.7
 #
 # A Program used to test control of motors over bluetooth
 #
@@ -60,10 +61,10 @@ def main():
 #        s.close()
 #        quit
 def driveForward(speed):
-    motors.motor1.setSpeed(speed)
+    motors.setSpeeds(speed,speed)
     time.sleep(0.005)
 def driveBackward(speed):
-    motors.motor1.setSpeed(-speed)
+    motors.setSpeeds(-speed,-speed)
     time.sleep(0.005)
 def stopMotors():
     motors.setSpeeds(0,0)
