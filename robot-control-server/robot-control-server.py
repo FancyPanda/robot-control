@@ -7,8 +7,8 @@ Bluetooth using PyBluez
 
 #####################<IMPORTS>##############################
 import bluetooth
-from random import randint
 import RPi.GPIO as GPIO
+from dual_mc33926_rpi import motors, MAX_SPEED
 import time
 
 ###################<GLOBAL VARS>###########################
@@ -64,7 +64,11 @@ def distance(sensor):
     distance = round(((TimeElapsed * 34300) / 2),2)
  
     return distance
-
+def drive(left,right)
+    motors.setSpeeds(left,right) 
+    time.sleep(0.005)   
+def stopMotors():
+    motors.setSpeeds(0,0)
 ##########################################################
 
 
@@ -72,15 +76,15 @@ def distance(sensor):
 
 ######################<MAIN CODE>#########################
 
-hostMACAddress = 'B8:27:EB:4A:A5:58' # The MAC address of a Bluetooth adapter on the server. The server might have multiple Bluetooth adapters.
+#hostMACAddress = 'B8:27:EB:4A:A5:58' # The MAC address of a Bluetooth adapter on the server. The server might have multiple Bluetooth adapters.
 port = 3
 backlog = 1
 size = 1024
 s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-s.bind((hostMACAddress, port))
+s.bind(("", port)) #((hostMACAddress, port))
 s.listen(backlog)
-left_val = 0
-right_val = 0
+motors.enable()
+motors.setSpeeds(0,0)
 setUpUltrasonicSensor(ULTRA_FL)
 setUpUltrasonicSensor(ULTRA_FR)
 setUpUltrasonicSensor(ULTRA_BL)
@@ -91,18 +95,30 @@ try:
         data = client.recv(size)
         if data:
             formated_data = formatData(data)
-            left_val = formated_data[0]
-            right_val = formated_data[1] 
-            print("DRIVE VALUES (L, R)") 
-            print(left_val, right_val)
-            sensor_values = getSensorValues()
-            print("SENSOR VALUES (FL, FR, BL, BR)")
-            print(sensor_values)
-            client.send(sensor_values) # Echo back to client
+            if formated_data:
+                left_val = formated_data[0]
+                right_val = formated_data[1] 
+                print("DRIVE VALUES (L, R)") 
+                print(left_val, right_val)
+                drive(left_val,right_val)
+                sensor_values = getSensorValues()
+                print("SENSOR VALUES (FL, FR, BL, BR)")
+                print(sensor_values)
+                client.send(sensor_values) # Echo back to client
+        else:
+            stopMotors()
+            time.sleep(0.005)
+    time.sleep(1/60)
 except: # Exception as e:
 #    print(str(e))	
     print("Closing socket")
     client.close()
     s.close()
+    motors.setSpeeds(0,0)
+    motors.disable()
+    quit
+finally:
+    motors.setSpeeds(0,0)
+    motors.disable()
 
     
