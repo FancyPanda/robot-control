@@ -6,9 +6,10 @@
 import time
 from dual_mc33926_rpi import motors, MAX_SPEED
 import bluetooth
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 ##############<METHODS>#####################
 def main():
+    time.sleep(10)
     print("Initiating Motor Control Test")
 #   hostMACAddress = 'B8:27:EB:4A:5A:58'
     port = 3
@@ -22,7 +23,6 @@ def main():
     try:
         client, clientInfo = s.accept()
         while(1):
-            print("test1")
             data = client.recv(1024)
             if data:
                 if data == "w":
@@ -39,12 +39,7 @@ def main():
                 else:
                     print('stopped')
                     stopMotors()
-            else:
-                print('no data')
-                stopMotors()
-                time.sleep(0.005)
             time.sleep(1/60)
-            print("cyle")
     except Exception as e:
         print(str(e))
         print("Closing socket")
@@ -53,10 +48,10 @@ def main():
         client.close()
         s.close()
         quit
-    finally:
+#    finally:
 #        print("closing test")
-        motors.setSpeeds(0,0)
-        motors.disable()
+#        motors.setSpeeds(0,0)
+#        motors.disable()
 #        client.close()
 #        s.close()
 #        quit

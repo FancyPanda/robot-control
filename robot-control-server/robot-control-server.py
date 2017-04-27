@@ -18,14 +18,17 @@ ULTRA_BL = (23,24)
 ULTRA_BR = (23,24)
 ####################<FUNCTIONS>############################
 def formatData(data):
-    p1 = 1
-    p2 = data.index("]")
-    p3 = p2+2 
-    p4 = len(data)-1
-    left_val = data[p1:p2] 
-    right_val = data[p3:p4]
-    return (left_val,right_val)
-
+    if data:
+        if data == 'stop':
+            return False
+        p1 = 1
+        p2 = data.index("]")
+        p3 = p2+2 
+        p4 = len(data)-1
+        left_val = data[p1:p2] 
+        right_val = data[p3:p4]
+        return (left_val,right_val)
+    return False
 def getSensorValues():
     dist_fl=distance(ULTRA_FL)
     dist_fr=distance(ULTRA_FR)
@@ -64,7 +67,7 @@ def distance(sensor):
     distance = round(((TimeElapsed * 34300) / 2),2)
  
     return distance
-def drive(left,right)
+def drive(left,right):
     motors.setSpeeds(left,right) 
     time.sleep(0.005)   
 def stopMotors():
@@ -75,7 +78,7 @@ def stopMotors():
 
 
 ######################<MAIN CODE>#########################
-
+time.sleep(10)
 #hostMACAddress = 'B8:27:EB:4A:A5:58' # The MAC address of a Bluetooth adapter on the server. The server might have multiple Bluetooth adapters.
 port = 3
 backlog = 1
@@ -85,10 +88,10 @@ s.bind(("", port)) #((hostMACAddress, port))
 s.listen(backlog)
 motors.enable()
 motors.setSpeeds(0,0)
-setUpUltrasonicSensor(ULTRA_FL)
-setUpUltrasonicSensor(ULTRA_FR)
-setUpUltrasonicSensor(ULTRA_BL)
-setUpUltrasonicSensor(ULTRA_BR)
+#setUpUltrasonicSensor(ULTRA_FL)
+#setUpUltrasonicSensor(ULTRA_FR)
+#setUpUltrasonicSensor(ULTRA_BL)
+#setUpUltrasonicSensor(ULTRA_BR)
 try:
     client, clientInfo = s.accept()
     while 1:
@@ -100,13 +103,14 @@ try:
                 right_val = formated_data[1] 
                 print("DRIVE VALUES (L, R)") 
                 print(left_val, right_val)
+                
                 drive(left_val,right_val)
-                sensor_values = getSensorValues()
-                print("SENSOR VALUES (FL, FR, BL, BR)")
-                print(sensor_values)
-                client.send(sensor_values) # Echo back to client
-        else:
-            stopMotors()
+                #sensor_values = getSensorValues()
+                #print("SENSOR VALUES (FL, FR, BL, BR)")
+                #print(sensor_values)
+                #client.send(sensor_values) # Echo back to client
+            else:
+                stopMotors()
             time.sleep(0.005)
     time.sleep(1/60)
 except: # Exception as e:
